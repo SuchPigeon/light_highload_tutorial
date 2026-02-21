@@ -1,0 +1,6 @@
+# I don't like pycache
+__pycache
+*/__pycache__
+*/*/__pycache__
+*/*/*/__pycache__
+*/*/*/*/__pycache__
