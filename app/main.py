@@ -1,7 +1,16 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from prometheus_fastapi_instrumentator import Instrumentator, metrics
 
 app = FastAPI()
+
+instrumentator = Instrumentator().add(
+    metrics.default(),      # http_requests_total (RPS, Errors)
+    metrics.latency(),      # http_request_duration_seconds (Response time)
+    metrics.request_size(), # Bonus: request bytes
+    metrics.response_size(),# Bonus: response bytes
+)
+instrumentator.instrument(app).expose(app)
 
 
 class User(BaseModel):
@@ -12,6 +21,9 @@ users = {}
 
 next_users_id = len(users)
 
+#@app.on_event("startup")
+#async def startup():
+#instrumentator.instrument(app).expose(app)
 
 @app.get("/users")
 async def read_users(username: str = None, limit: int = 10):
